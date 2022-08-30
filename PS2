@@ -1,0 +1,39 @@
+
+
+secret_word = ['a', 'p', 'p', 'l', 'e']
+show_length = ('_' * len(secret_word))
+
+my_word = []
+my_word += show_length
+print("my word:")
+print(my_word)
+
+
+
+guessed_word = str(input("Guess a letter\n"))
+
+counts = 0
+def is_it_inside(secret_word, guessed_word):
+    
+    if guessed_word == secret_word[counts]:
+        print("now replace")
+        my_word[counts] = guessed_word
+                   
+    elif guessed_word != secret_word[counts]:
+        
+        print("not inside")
+    else:
+        print("make another one")
+    print("New my word")
+    print(my_word)
+    
+    counts += 1
+    return counts
+
+#add a "while" before is_it_inside, and add a break condition
+is_it_inside(secret_word, guessed_word)
+
+print("counts:")
+print(counts)
+
+print()
