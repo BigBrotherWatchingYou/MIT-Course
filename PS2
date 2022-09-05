@@ -1,39 +1,177 @@
+# Problem Set 2, hangman.py
+# Name: 
+# Collaborators:
+# Time spent:
+
+# Hangman Game
+# -----------------------------------
+# Helper code
+# You don't need to understand this helper code,
+# but you will have to know how to use the functions
+# (so be sure to read the docstrings!)
+import random
+import string
+
+WORDLIST_FILENAME = "words.txt"
 
 
-secret_word = ['a', 'p', 'p', 'l', 'e']
-show_length = ('_' * len(secret_word))
-
-my_word = []
-my_word += show_length
-print("my word:")
-print(my_word)
-
-
-
-guessed_word = str(input("Guess a letter\n"))
-
-counts = 0
-def is_it_inside(secret_word, guessed_word):
+def load_words():
+    """
+    Returns a list of valid words. Words are strings of lowercase letters.
     
-    if guessed_word == secret_word[counts]:
-        print("now replace")
-        my_word[counts] = guessed_word
-                   
-    elif guessed_word != secret_word[counts]:
+    Depending on the size of the word list, this function may
+    take a while to finish.
+    """
+    print("Loading word list from file...")
+    # inFile: file
+    inFile = open(WORDLIST_FILENAME, 'r')
+    # line: string
+    line = inFile.readline()
+    # wordlist: list of strings
+    wordlist = line.split()
+    print("  ", len(wordlist), "words loaded.")
+    return wordlist
+
+
+
+def choose_word(wordlist):
+    """
+    wordlist (list): list of words (strings)
+    
+    Returns a word from wordlist at random
+    """
+    return random.choice(wordlist)
+
+# end of helper code
+
+# -----------------------------------
+
+# Load the list of words into the variable wordlist
+# so that it can be accessed from anywhere in the program
+wordlist = load_words()
+
+
+def is_word_guessed(secret_word, letters_guessed):
+    #  secret_word = A
+    #  letters_guessed = B
+    # check whether B contains a
+    for char in secret_word:
+      if char in letters_guessed:
+        return True
+      else:
+        return False
+
+
+
+def get_guessed_word(secret_word, letters_guessed):
+    
+    guessed =[]
+    for i in range(len(secret_word)):
+      if secret_word[i] in letters_guessed:
+        guessed.append(secret_word[i])
+      else:
+        guessed.append('_ ')
+    return guessed
+
+
+
+
+
+def get_available_letters(letters_guessed):
+    alphabet = string.ascii_lowercase
+    a = []
+    for char in alphabet:
+      if char not in letters_guessed:
+        a.append(char)
+    return ''.join(a)
+  
+    
+    
+
+def hangman(secret_word):
+    
+    letters_guessed = []
+    i = 7
+    print("Word length: ", len(secret_word))
+    while i > 0:
+      print("You have ", i, " chances")
+      new_guess = input(str("Guess a word:\n"))
+      
+      if new_guess == '*':
+        print(show_possible_matches(get_guessed_word(secret_word, letters_guessed)))
+      #here need to check if new_guess is inside letters_guessed
+      
+      #here check if the letter in secret_word
+      if is_word_guessed(new_guess, secret_word):
+        #guessed append the word in a right position
+        letters_guessed.append(new_guess)
+        print(get_available_letters(letters_guessed))
+        print("Good Guess", get_guessed_word(secret_word, letters_guessed))
         
-        print("not inside")
-    else:
-        print("make another one")
-    print("New my word")
-    print(my_word)
+      else:
+        letters_guessed.append(new_guess)
+        print(get_available_letters(letters_guessed))
+        print("!!!!WRONG!!!!\n", get_guessed_word(secret_word, letters_guessed)) 
+        
+        if get_guessed_word(secret_word, letters_guessed) == secret_word:
+          print("You win")
+          break
+      print("The word you have used: ", letters_guessed) 
+      print("--------------------------------------")
+      
+      i -= 1
+      
+      
+      if i <= 0:
+        print("you lose, secrect word:" , secret_word)
+        break
     
-    counts += 1
-    return counts
 
-#add a "while" before is_it_inside, and add a break condition
-is_it_inside(secret_word, guessed_word)
 
-print("counts:")
-print(counts)
 
-print()
+
+
+
+def match_with_gaps(my_word, other_word):
+    num = 0
+    my_word = str(my_word).replace(' ', '')
+    #delete space
+    if len(my_word) == len(other_word):
+      for i in range(len(my_word)):
+        if my_word[i] == '_' or my_word[i] == other_word[i]:
+          # skip the '_' 
+          pass 
+        else:
+          #no match
+          num += 1
+
+      if num == 0:
+        return True
+      else:
+        return False
+    else:
+        return False
+
+
+
+def show_possible_matches(my_word):
+    list = []
+    for word in wordlist:
+      if match_with_gaps(my_word, word):
+        list.append(word)
+    
+    if len(list) != 0:
+      print(' '.join(list))
+    else:
+      print("No matches found")
+
+    
+
+
+
+secret_word = choose_word(wordlist)
+
+hangman(secret_word)
+   
+
+
