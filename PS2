@@ -149,11 +149,13 @@ def match_with_gaps(my_word, other_word):
     #delete space
     num = 0
     for i in range(len(my_word)):
-      if my_word[i] == '_' or my_word[i] == other_word[i]:
+        if my_word[i] == '_' or my_word[i] == other_word[i]:
           # match the letters and skip '_' 
+          #for example match 'a _ _ l _' with 'a p p l e'
           print("got a match")
           pass 
-      else:
+
+        else:
           #an unmatched letter occurs
           num += 1
           print("num = 1")
@@ -167,9 +169,13 @@ def match_with_gaps(my_word, other_word):
 
 def show_possible_matches(my_word):
     list = []
-    my_word = str(my_word).replace(' ', '')
+    my_word = my_word.replace(' ', '')
+    print("len my_word:", len(my_word))
+    print(my_word)
+
     for word1 in wordlist:
       if len(my_word) == len(word1):
+        print("get a length")
         if match_with_gaps(my_word, word1):
           list.append(word1)
         
