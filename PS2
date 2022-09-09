@@ -11,6 +11,7 @@
 # (so be sure to read the docstrings!)
 import random
 import string
+from types import new_class
 
 WORDLIST_FILENAME = "words.txt"
 
@@ -71,7 +72,7 @@ def get_guessed_word(secret_word, letters_guessed):
         guessed.append(secret_word[i])
       else:
         guessed.append('_ ')
-    return ''.join(guessed)
+    return guessed
 
 
 
@@ -89,44 +90,85 @@ def get_available_letters(letters_guessed):
     
 
 def hangman(secret_word):
-    
+    score = 100
     letters_guessed = []
     i = 7
+    round = 1
+    warnings = 4
     print(secret_word)
+    
     print("Word length: ", len(secret_word))
+    
     while i > 0:
+      print("\n\n\n\n\n\n\n--------------------------------------")
+      print("Word length: ", len(secret_word))  
+      print("Round  ", round)
+      round += 1
       print("You have ", i, " chances")
       new_guess = input(str("Guess a word:\n"))
-      
+      new_guess = new_guess.lower()
+      if new_guess in letters_guessed:
+        #warning part
+        if warnings > 0:
+          print("warning: you have already guessed that letter")
+
+          print("You have " , warnings, " left")
+          warnings -= 1
+          score -= 10
+        if warnings == 0:
+          print("warning: you have already guessed that letter")
+          print("no more warnings")
+          score -= 10
+          warnings -= 1
+
       if new_guess == '*':
-        
-        show_possible_matches(get_guessed_word(secret_word, letters_guessed))
-        #print(show_possible_matches(get_guessed_word(secret_word, letters_guessed)))
-      #here need to check if new_guess is inside letters_guessed
+        #get available words part
+          score -= 10
+          show_possible_matches(get_guessed_word(secret_word, letters_guessed))
+      if new_guess not in letters_guessed:
+          letters_guessed.append(new_guess)
+
       
-      #here check if the letter in secret_word
       if is_word_guessed(new_guess, secret_word):
         #guessed append the word in a right position
-        letters_guessed.append(new_guess)
+        #here check if the letter in secret_word
         print(get_available_letters(letters_guessed))
         print("Good Guess", (get_guessed_word(secret_word, letters_guessed)))
+      
+          
         
       else:
-        letters_guessed.append(new_guess)
-        print(get_available_letters(letters_guessed))
-        print("!!!!WRONG!!!!\nguesses:", (get_guessed_word(secret_word, letters_guessed)))
+        if new_guess in ('a','e','i','o','u'):
+          i -= 1
+          score -= 10
+        print("!!!!WRONG!!!!\nguesses:", (get_guessed_word(secret_word, letters_guessed)))  
+         
+        #print(show_possible_matches(get_guessed_word(secret_word, letters_guessed)))
+        #here need to check if new_guess is inside letters_guessed
+        print("available letters: ", get_available_letters(letters_guessed))
         
-      if get_guessed_word(secret_word, letters_guessed) == secret_word or new_guess == str(secret_word):
+        i -= 1
+        score -= 10
+        
+      guesses_real = ''.join(get_guessed_word(secret_word, letters_guessed))
+      guesses_real = str(guesses_real.replace(' ', ''))
+
+      print(" guesses_real:",  guesses_real)
+      if guesses_real == secret_word or new_guess == str(secret_word):
+        #you win
           print("You win")
-          break
-      print("The word you have used: ", letters_guessed) 
-      print("--------------------------------------")
+          print("The word you have used: ", letters_guessed) 
+          print("Your score:  ", score)
+          
       
-      i -= 1
+          break
       
       
       if i <= 0:
+        #game over, you lose
+        print("--------------------------------------")
         print("you lose, secrect word:" , secret_word)
+        print("--------------------------------------")
         break
     
 
@@ -170,10 +212,10 @@ def match_with_gaps(my_word, other_word):
 
 def show_possible_matches(my_word):
     list = []
-    #my_word = str(my_word.replace(' ', ''))
+    my_word = ''.join(my_word)
+    
     my_word = str(my_word.replace(' ', ''))
-    print("len my_word:", len(my_word))
-    print(my_word)
+    
     
     
 
