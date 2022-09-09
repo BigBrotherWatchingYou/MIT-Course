@@ -71,7 +71,7 @@ def get_guessed_word(secret_word, letters_guessed):
         guessed.append(secret_word[i])
       else:
         guessed.append('_ ')
-    return guessed
+    return ''.join(guessed)
 
 
 
@@ -109,12 +109,12 @@ def hangman(secret_word):
         #guessed append the word in a right position
         letters_guessed.append(new_guess)
         print(get_available_letters(letters_guessed))
-        print("Good Guess", get_guessed_word(secret_word, letters_guessed))
+        print("Good Guess", (get_guessed_word(secret_word, letters_guessed)))
         
       else:
         letters_guessed.append(new_guess)
         print(get_available_letters(letters_guessed))
-        print("!!!!WRONG!!!!\n", get_guessed_word(secret_word, letters_guessed)) 
+        print("!!!!WRONG!!!!\nguesses:", (get_guessed_word(secret_word, letters_guessed)))
         
       if get_guessed_word(secret_word, letters_guessed) == secret_word or new_guess == str(secret_word):
           print("You win")
@@ -144,21 +144,22 @@ def hangman(secret_word):
 
 def match_with_gaps(my_word, other_word):
     
-    my_word = str(my_word).replace(' ', '')
+    #here you need to transfer my_word into string
     
-    #delete space
+    
     num = 0
+    
     for i in range(len(my_word)):
         if my_word[i] == '_' or my_word[i] == other_word[i]:
           # match the letters and skip '_' 
           #for example match 'a _ _ l _' with 'a p p l e'
-          print("got a match")
+          
           pass 
 
         else:
           #an unmatched letter occurs
           num += 1
-          print("num = 1")
+          
     if num == 0:
         return True
     else:
@@ -169,19 +170,22 @@ def match_with_gaps(my_word, other_word):
 
 def show_possible_matches(my_word):
     list = []
-    my_word = my_word.replace(' ', '')
+    #my_word = str(my_word.replace(' ', ''))
+    my_word = str(my_word.replace(' ', ''))
     print("len my_word:", len(my_word))
     print(my_word)
+    
+    
 
     for word1 in wordlist:
       if len(my_word) == len(word1):
-        print("get a length")
+        
         if match_with_gaps(my_word, word1):
           list.append(word1)
         
     
     if len(list) != 0 :
-        print(''.join(list))
+        print(list)
     else:
         print("No matches found")
         
