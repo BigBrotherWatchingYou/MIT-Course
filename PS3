@@ -10,6 +10,7 @@
 import math
 import random
 import string
+from tabnanny import check
 
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
@@ -98,21 +99,21 @@ def get_word_score(word, n):
     # this function is to count the current score
     # it has two components , whichever has a greater value becomes the score  
     #remember to transfer word into str'asfwe'
-    value_score = 0
+    value_score = 1
     sum_score = 0
     #count value score
     for i in word:
         if i in SCRABBLE_LETTER_VALUES:
-            value_score += SCRABBLE_LETTER_VALUES[i]
+            
+            value_score *= SCRABBLE_LETTER_VALUES[i]
     #count sum score
     sum_score = (7*len(word)) - (3*(n - len(word)))
-    if sum_score <= 0:
-        sum_score = 1
+    #if word = ''
+    if len(word) <= 0:
+        value_score = 0
+        sum_score = 0 
     #make components, check which score is greater
-    if value_score > sum_score:
-        return value_score
-    else:
-        return sum_score
+        return sum_score * value_score
 
     
    
@@ -194,7 +195,9 @@ def update_hand(hand, word):
     returns: dictionary (string -> int)
     """
 
-    pass  # TO DO... Remove this line when you implement this function
+    new_hand = hand[:]
+    #delete the word in hand, return new_hand
+    pass
 
 #
 # Problem #3: Test word validity
@@ -210,8 +213,31 @@ def is_valid_word(word, hand, word_list):
     word_list: list of lowercase strings
     returns: boolean
     """
+    word.split()
+    point = 0
+    # set a copy of hand
+    check_hand = hand[:]
+    # create two for loop
+    for letters in word:
+        if letters in check_hand:
+          # delete every letter when matched
+            check_hand[letters] -= 1
+            point = 0
+            if check_hand[letters] < 0:
+                #situation when word has a letter more times than in hand
+                point += 1
+        else:
+            point += 1
+    if point != 0:
+        return False
+    else:
+        return True  
 
-    pass  # TO DO... Remove this line when you implement this function
+    
+    # when a letter in word got no matching in hand, return False
+    # all matched : return True
+    
+    # TO DO... Remove this line when you implement this function
 
 #
 # Problem #5: Playing a hand
@@ -223,8 +249,8 @@ def calculate_handlen(hand):
     hand: dictionary (string-> int)
     returns: integer
     """
-    
-    pass  # TO DO... Remove this line when you implement this function
+    return len(update_hand(hand, word))
+      # TO DO... Remove this line when you implement this function
 
 def play_hand(hand, word_list):
 
@@ -258,35 +284,42 @@ def play_hand(hand, word_list):
     """
     
     # BEGIN PSEUDOCODE <-- Remove this comment when you implement this function
+    total_score = 0
+
     # Keep track of the total score
     
     # As long as there are still letters left in the hand:
-    
+    while len(hand) > 0:
+        total_score += get_word_score(word, n)
         # Display the hand
-        
+        display_hand(hand)
         # Ask user for input
-        
+        word = input(str("input a word"))
         # If the input is two exclamation points:
-        
+        if word == '!!':
             # End the game (break out of the loop)
+            print("Quit Game")
+            break
 
             
         # Otherwise (the input is not two exclamation points):
-
+        else:
             # If the word is valid:
-
+            if is_valid_word(word, hand, word_list):
                 # Tell the user how many points the word earned,
+                get_word_score(word, n)
                 # and the updated total score
-
+                total_score += get_word_score(word, n)
             # Otherwise (the word is not valid):
                 # Reject invalid word (print a message)
-                
+            else:    
             # update the user's hand by removing the letters of their inputted word
+                update_hand(hand, word)
             
 
     # Game is over (user entered '!!' or ran out of letters),
     # so tell user the total score
-
+    print(total_score)
     # Return the total score as result of function
 
 
