@@ -99,21 +99,24 @@ def get_word_score(word, n):
     # this function is to count the current score
     # it has two components , whichever has a greater value becomes the score  
     #remember to transfer word into str'asfwe'
-    value_score = 1
+    value_score = 0
     sum_score = 0
     #count value score
+    word = word.lower()
     for i in word:
         if i in SCRABBLE_LETTER_VALUES:
             
-            value_score *= SCRABBLE_LETTER_VALUES[i]
+            value_score += SCRABBLE_LETTER_VALUES[i]
     #count sum score
     sum_score = (7*len(word)) - (3*(n - len(word)))
+    if sum_score <= 0:
+        sum_score = 1
     #if word = ''
     if len(word) <= 0:
         value_score = 0
         sum_score = 0 
     #make components, check which score is greater
-        return sum_score * value_score
+    return sum_score * value_score
 
     
    
@@ -194,10 +197,14 @@ def update_hand(hand, word):
     hand: dictionary (string -> int)    
     returns: dictionary (string -> int)
     """
-
-    new_hand = hand[:]
+    word = word.lower()
+    hand_copy = hand.copy()
+  
+    for k in word:
+        hand_copy[k] -= 1
+    return hand_copy
     #delete the word in hand, return new_hand
-    pass
+    
 
 #
 # Problem #3: Test word validity
