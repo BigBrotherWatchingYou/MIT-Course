@@ -46,20 +46,20 @@ def load_words():
 
 def get_frequency_dict(sequence):
     """
-    Returns a dictionary where the keys are elements of the sequence
-    and the values are integer counts, for the number of times that
-    an element is repeated in the sequence.
+    Returns a dictionary where the keys are elements of the sequence    
+    and the values are integer counts, for the number of times that 
+    an element is repeated in the sequence. 
 
-    sequence: string or list
-    return: dictionary
-    """
-    
-    # freqs: dictionary (element_type -> int)
-    freq = {}
-    for x in sequence:
-        freq[x] = freq.get(x,0) + 1
-    return freq
-	
+    sequence: string or list    
+    return: dictionary  
+    """ 
+
+    # freqs: dictionary (element_type -> int)   
+    freq = {}   
+    for x in sequence:  
+        freq[x] = freq.get(x,0) + 1 
+    return freq 
+	#turn the 'sequence' into dictionery
 
 # (end of helper code)
 # -----------------------------------
@@ -220,30 +220,52 @@ def is_valid_word(word, hand, word_list):
     word_list: list of lowercase strings
     returns: boolean
     """
-    word.split()
-    point = 0
-    # set a copy of hand
-    check_hand = hand[:]
-    # create two for loop
-    for letters in word:
-        if letters in check_hand:
-          # delete every letter when matched
-            check_hand[letters] -= 1
-            point = 0
-            if check_hand[letters] < 0:
-                #situation when word has a letter more times than in hand
-                point += 1
-        else:
-            point += 1
-    if point != 0:
-        return False
-    else:
-        return True  
+    
+    word = word.lower()
+    point = False
+    
 
     
+    # set a copy of hand
+    copy_hand = hand.copy()
+    # create two for loop
+    # loop_1: when there's a '*' in word 
+    if word.count('*') == 1:
+        # replace  '*' with another letter
+        
+        for vowel in VOWELS:
+            try_word = word.copy()
+            try_word.replace('*', vowel)
+            if try_word not in word_list:
+                continue
+            if try_word in word_list:
+                point = True
+                break 
+
+            
+    # loop when there's no '*' in word    
+    if '*' not in word:
+        if word in word_list:
+            point = True
+            for letters in word:
+                if letters in copy_hand:
+          # delete every letter when matched
+                    copy_hand[letters] -= 1
+            
+                    if copy_hand[letters] < 0:
+                #situation when word has a letter more times than in hand
+                        point = False
+                if letters not in copy_hand:
+                    point = False
+        else:
+            point = False
+      
     # when a letter in word got no matching in hand, return False
+    if point:
+        return True
     # all matched : return True
-    
+    else:
+        return False
     # TO DO... Remove this line when you implement this function
 
 #
