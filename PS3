@@ -11,6 +11,7 @@ import math
 import random
 import string
 from tabnanny import check
+import pdb
 
 VOWELS = 'aeiou'
 CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
@@ -230,17 +231,16 @@ def is_valid_word(word, hand, word_list):
     copy_hand = hand.copy()
     # create two for loop
     # loop_1: when there's a '*' in word 
-    if word.count('*') == 1:
+    if word.count('*') >= 1:
         # replace  '*' with another letter
         
         for vowel in VOWELS:
-            try_word = word.copy()
-            try_word.replace('*', vowel)
-            if try_word not in word_list:
-                continue
+            try_word = word[:]
+            try_word = try_word.replace('*', vowel)
+            
             if try_word in word_list:
                 point = True
-                break 
+                
 
             
     # loop when there's no '*' in word    
@@ -249,11 +249,11 @@ def is_valid_word(word, hand, word_list):
             point = True
             for letters in word:
                 if letters in copy_hand:
-          # delete every letter when matched
+                    # delete every letter when matched
                     copy_hand[letters] -= 1
             
                     if copy_hand[letters] < 0:
-                #situation when word has a letter more times than in hand
+                    #situation when word has a letter more times than in hand
                         point = False
                 if letters not in copy_hand:
                     point = False
