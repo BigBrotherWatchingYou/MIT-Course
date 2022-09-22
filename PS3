@@ -7,10 +7,11 @@
 # Collaborators : <your collaborators>
 # Time spent    : <total time>
 
+
 import math
 import random
 import string
-from tabnanny import check
+
 import pdb
 
 VOWELS = 'aeiou'
@@ -203,6 +204,7 @@ def update_hand(hand, word):
   
     for k in word:
         hand_copy[k] -= 1
+        
     return hand_copy
     #delete the word in hand, return new_hand
     
@@ -234,9 +236,9 @@ def is_valid_word(word, hand, word_list):
     if word.count('*') >= 1:
         # replace  '*' with another letter
         
-        for vowel in VOWELS:
+        for letters in string.ascii_lowercase:
             try_word = word[:]
-            try_word = try_word.replace('*', vowel)
+            try_word = try_word.replace('*', letters)
             
             if try_word in word_list:
                 point = True
@@ -278,9 +280,12 @@ def calculate_handlen(hand):
     hand: dictionary (string-> int)
     returns: integer
     """
-    return len(update_hand(hand, word))
+    hand_len = 0
+    for letter in hand.keys():
+        for j in range(hand[letter]):
+            hand_len += 1
       # TO DO... Remove this line when you implement this function
-
+    return hand_len
 def play_hand(hand, word_list):
 
     """
@@ -311,19 +316,37 @@ def play_hand(hand, word_list):
       returns: the total score for the hand
       
     """
-    
-    # BEGIN PSEUDOCODE <-- Remove this comment when you implement this function
-    total_score = 0
-
     # Keep track of the total score
-    
+    total_score = 0
+    hand['*']= 1
+    print("我给你送了张牌，' * ' 这可以替代任何一个字母")
+    print("用法举例：若你要输入'zoo' 可以输入'zo*'来替代")
     # As long as there are still letters left in the hand:
-    while len(hand) > 0:
-        total_score += get_word_score(word, n)
+    while calculate_handlen(hand) > 0 :
+        
+        if calculate_handlen(hand) <= 1:
+            print("you got only one letter left, time to give up!\n就剩一个了，别玩了，哥们，输入 !! 退出吧！\n")
+        print("input !! to quit \n如果你感觉脑子不够用，可以输入 !!  结束游戏 ")
+        print("input 'wdnmd' to enter helper mode\n或者输入 wdnmd 进入帮助模式")
+        if hand['*'] > 0:
+            print("your '*' hasn't been used yet\n  你的 '*' 还没用，把握机会！\n")
+        print('create a word using the letters\n根据这些牌的字母，组成一个单词，输入进来--大小写均可')
+        print("total_score: \总分数" , total_score)
+        
+        n = calculate_handlen(hand)
         # Display the hand
         display_hand(hand)
+        
         # Ask user for input
-        word = input(str("input a word"))
+        word = input(str("input your word输入你组成的单词\n"))
+        word = word.lower()
+        if word == 'wdnmd':
+            print('====================================')
+            print("seems that you are in trouble, do you need help?\n看起来你不太行，需要换个字母吗？")
+            letter = word
+            hand = substitute_hand(hand, letter)
+
+
         # If the input is two exclamation points:
         if word == '!!':
             # End the game (break out of the loop)
@@ -332,22 +355,29 @@ def play_hand(hand, word_list):
 
             
         # Otherwise (the input is not two exclamation points):
-        else:
+        elif word != 'wdnmd' and word != '!!':
             # If the word is valid:
             if is_valid_word(word, hand, word_list):
                 # Tell the user how many points the word earned,
-                get_word_score(word, n)
+                print("how many points the word earned: 这个单词多少分：", get_word_score(word, n))
                 # and the updated total score
+
                 total_score += get_word_score(word, n)
+                # update the user's hand by removing the letters of their inputted word
+                hand = update_hand(hand, word)
+                print("---------------------------------------------------------\n")
             # Otherwise (the word is not valid):
-                # Reject invalid word (print a message)
             else:    
-            # update the user's hand by removing the letters of their inputted word
-                update_hand(hand, word)
+            # Reject invalid word (print a message)
+                print("word invalid")
+                print("------------------------------------------------------")
+                
+                
             
 
     # Game is over (user entered '!!' or ran out of letters),
     # so tell user the total score
+    print("game over, your score:")
     print(total_score)
     # Return the total score as result of function
 
@@ -384,16 +414,39 @@ def substitute_hand(hand, letter):
     letter: string
     returns: dictionary (string -> int)
     """
+   
+    print("helper mode\n您已经进入帮助模式,请按照指示操作")
+    display_hand(hand)
+    alphabet =  string.ascii_lowercase
+
+    # alphabet letters should not contain letters in hand
+    for l in hand:
+        alphabet = alphabet.replace(l, '')
+    # choose a word from alphabet
+    replace_word = random.choice(alphabet)
+    #let the user choose a word in hand to replace    
+    new = input(str("choose a letter to replace\n你要换掉哪张牌？"))
+    #check if the letter is in hand
+    if new in hand:
+        hand[replace_word] = hand.pop(new)
+        print("already replace ", new, "with ", replace_word)
+        print("替换完毕，请继续游戏")
+        print('==========================================')        
+        return hand
+    else:
+        print('the word you choose is not inside\n没有你这张牌，同志\n')
+        print('=================================')
     
-    pass  # TO DO... Remove this line when you implement this function
+    
+    
        
     
 def play_game(word_list):
     """
     Allow the user to play a series of hands
-
+    
     * Asks the user to input a total number of hands
-
+    
     * Accumulates the score for each hand into a total score for the 
       entire series
  
@@ -418,8 +471,35 @@ def play_game(word_list):
 
     word_list: list of lowercase strings
     """
+    #input how many words in hand
+    n = int(input(" Please input a total number of hands--选择你的手牌数量--给我输入个数字  建议7或者8\n"))
     
-    print("play_game not implemented.") # TO DO... Remove this line when you implement this function
+    hand_1 = deal_hand(n)
+    hand_2 = deal_hand(n)
+    hand_3 = deal_hand(n)
+    check_digit = True
+    #choose a hand
+    
+    print("No.1:" )
+    display_hand(hand_1)
+    print("No.2:" )
+    display_hand(hand_2)
+    print("No.3:" )
+    display_hand(hand_3)
+    m = int(input("choose a hand(1 or 2 or 3)--选一套牌--输入1或者2或者3\n"))
+    if m == 1:
+        hand = hand_1
+    if m == 2:
+        hand = hand_2
+    if m == 3:
+        hand = hand_3
+    print("your choice: hand_", m )
+    print("----------------------------------------------")
+    
+    # shart the game
+    print("GAME START")
+    play_hand(hand, word_list)
+
     
 
 
@@ -428,6 +508,6 @@ def play_game(word_list):
 # Do not remove the "if __name__ == '__main__':" line - this code is executed
 # when the program is run directly, instead of through an import statement
 #
-if __name__ == '__main__':
-    word_list = load_words()
-    play_game(word_list)
+
+word_list = load_words()
+play_game(word_list)
