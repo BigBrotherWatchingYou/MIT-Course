@@ -1,0 +1,13 @@
+001: Hamming code
+verifying the information by adding verify code (0/1) at desinated position
+
+(1) count how much hamming code needed: 
+2**r-1 >= m+r  (m=information length), (r= how many hamming code needed)
+example : if you want to send a 16th information, then the hamming code was 
+added at the position of  2**0, 2**1, 2**2....etc,(2**4=16, 2**5=32) 
+
+(2)locate hamming code
+sexample: 0	1	1	0	1	1	1	0 (original).
+hamming added: 0	1	1	0	H8	1	1	1	H4	0	H2	H1
+
+(3)
